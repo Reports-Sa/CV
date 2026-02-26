@@ -666,154 +666,191 @@ function collectLanguages() {
 
 // ===== MARKDOWN =====
 function compileMarkdown() {
-  const pm={ar:'سيرة باللغة العربية (50 ريال)',en:'سيرة باللغة الإنجليزية (50 ريال)',both:'سيرتين عربية + إنجليزية (100 ريال)'};
-  let md = `# 📋 طلب خدمة سيرة ذاتية — سيرتي المميزة\n\n---\n\n`;
+  const pm = {
+    ar: 'سيرة باللغة العربية (50 ريال)',
+    en: 'سيرة باللغة الإنجليزية (50 ريال)',
+    both: 'سيرتين عربية + إنجليزية (100 ريال)'
+  };
+  const lines = [];
+
+  // Header
+  lines.push('# 📋 طلب خدمة سيرة ذاتية — سيرتي المميزة');
+  lines.push('');
+  lines.push('---');
+  lines.push('');
 
   // 1 Package
-  md += `## 1️⃣ الحزمة المختارة\n\n`;
-  md += `- **الحزمة:** ${selectedPricing ? pm[selectedPricing] : 'لم يتم الاختيار'}\n\n`;
+  lines.push('## 1️⃣ الحزمة المختارة');
+  lines.push('');
+  lines.push('- **الحزمة:** ' + (selectedPricing ? pm[selectedPricing] : 'لم يتم الاختيار'));
+  lines.push('');
 
   // 2 Personal Info
-  md += `## 2️⃣ المعلومات الشخصية\n\n`;
-  md += `- **الاسم الكامل:** ${v('full_name')}\n`;
-  md += `- **رقم الجوال:** ${v('phone')}\n`;
-  md += `- **البريد الإلكتروني:** ${v('email')}\n`;
-  md += `- **المدينة:** ${v('city') || 'منفتح على الانتقال'}\n`;
-  md += `- **الجنسية:** ${v('nationality') || 'لم يُحدد'}\n`;
+  lines.push('## 2️⃣ المعلومات الشخصية');
+  lines.push('');
+  lines.push('- **الاسم الكامل:** ' + v('full_name'));
+  lines.push('- **رقم الجوال:** ' + v('phone'));
+  lines.push('- **البريد الإلكتروني:** ' + v('email'));
+  lines.push('- **المدينة:** ' + (v('city') || 'منفتح على الانتقال'));
+  lines.push('- **الجنسية:** ' + (v('nationality') || 'لم يُحدد'));
   const n2 = v('note2_text');
-  if (n2) md += `- **ملاحظة:** ${n2}\n`;
-  md += `\n`;
+  if (n2) lines.push('- **ملاحظة:** ' + n2);
+  lines.push('');
 
   // 3 Education
-  md += `## 3️⃣ المؤهلات العلمية\n\n`;
+  lines.push('## 3️⃣ المؤهلات العلمية');
+  lines.push('');
   let anyEdu = false;
   for (let i = 1; i <= eduCount; i++) {
-    if (!document.getElementById(`edu-block-${i}`)) continue;
-    const [dg, mj, un, yr] = [v(`edu_degree_${i}`), v(`edu_major_${i}`), v(`edu_uni_${i}`), v(`edu_year_${i}`)];
+    if (!document.getElementById('edu-block-' + i)) continue;
+    const dg = v('edu_degree_' + i), mj = v('edu_major_' + i);
+    const un = v('edu_uni_' + i),    yr = v('edu_year_' + i);
     if (dg || mj || un || yr) {
       anyEdu = true;
-      md += `### مؤهل ${i}\n\n`;
-      if (dg) md += `- **الدرجة:** ${dg}\n`;
-      if (mj) md += `- **التخصص:** ${mj}\n`;
-      if (un) md += `- **الجامعة:** ${un}\n`;
-      if (yr) md += `- **سنة التخرج:** ${yr}\n`;
-      md += `\n`;
+      lines.push('### مؤهل ' + i);
+      lines.push('');
+      if (dg) lines.push('- **الدرجة:** ' + dg);
+      if (mj) lines.push('- **التخصص:** ' + mj);
+      if (un) lines.push('- **الجامعة:** ' + un);
+      if (yr) lines.push('- **سنة التخرج:** ' + yr);
+      lines.push('');
     }
   }
-  if (!anyEdu) md += `- لم يتم إدخال مؤهلات\n\n`;
+  if (!anyEdu) { lines.push('- لم يتم إدخال مؤهلات'); lines.push(''); }
 
   // 3b Certifications
-  md += `## 🏅 الشهادات الاحترافية والرخص\n\n`;
+  lines.push('## 🏅 الشهادات الاحترافية والرخص');
+  lines.push('');
   let anyCert = false;
   for (let i = 1; i <= certCount; i++) {
-    if (!document.getElementById(`cert-block-${i}`)) continue;
-    const [nm, is, dt] = [v(`cert_name_${i}`), v(`cert_issuer_${i}`), v(`cert_date_${i}`)];
+    if (!document.getElementById('cert-block-' + i)) continue;
+    const nm = v('cert_name_' + i), is = v('cert_issuer_' + i), dt = v('cert_date_' + i);
     if (nm || is) {
       anyCert = true;
-      md += `### شهادة ${i}\n\n`;
-      if (nm) md += `- **اسم الشهادة:** ${nm}\n`;
-      if (is) md += `- **الجهة المانحة:** ${is}\n`;
-      if (dt) md += `- **تاريخ الحصول:** ${dt}\n`;
-      md += `\n`;
+      lines.push('### شهادة ' + i);
+      lines.push('');
+      if (nm) lines.push('- **اسم الشهادة:** ' + nm);
+      if (is) lines.push('- **الجهة المانحة:** ' + is);
+      if (dt) lines.push('- **تاريخ الحصول:** ' + dt);
+      lines.push('');
     }
   }
-  if (!anyCert) md += `- لا توجد شهادات احترافية\n\n`;
+  if (!anyCert) { lines.push('- لا توجد شهادات احترافية'); lines.push(''); }
 
   // 3c Courses
-  md += `## 📚 الدورات التدريبية\n\n`;
+  lines.push('## 📚 الدورات التدريبية');
+  lines.push('');
   let anyCourse = false;
   for (let i = 1; i <= courseCount; i++) {
-    if (!document.getElementById(`course-block-${i}`)) continue;
-    const [nm, org] = [v(`course_name_${i}`), v(`course_org_${i}`)];
+    if (!document.getElementById('course-block-' + i)) continue;
+    const nm = v('course_name_' + i), org = v('course_org_' + i);
     if (nm || org) {
       anyCourse = true;
-      md += `- **${nm || 'دورة'}**${org ? ' — ' + org : ''}\n`;
+      lines.push('- **' + (nm || 'دورة') + '**' + (org ? ' — ' + org : ''));
     }
   }
-  if (!anyCourse) md += `- لا توجد دورات مُدخلة\n`;
+  if (!anyCourse) lines.push('- لا توجد دورات مُدخلة');
   const n3 = v('note3_text');
-  if (n3) md += `\n**ملاحظة (المؤهلات):** ${n3}\n`;
-  md += `\n`;
+  if (n3) { lines.push(''); lines.push('**ملاحظة (المؤهلات):** ' + n3); }
+  lines.push('');
 
   // 4 Experience
-  md += `## 4️⃣ الخبرة العملية\n\n`;
+  lines.push('## 4️⃣ الخبرة العملية');
+  lines.push('');
   if (hasExperience === false) {
-    md += `- **لا توجد خبرة عملية سابقة**\n\n`;
+    lines.push('- **لا توجد خبرة عملية سابقة**');
+    lines.push('');
   } else if (hasExperience === true) {
     for (let i = 1; i <= expCount; i++) {
-      if (!document.getElementById(`exp-block-${i}`)) continue;
-      const [tt, co, pr, tk] = [v(`exp_title_${i}`), v(`exp_company_${i}`), v(`exp_period_${i}`), v(`exp_tasks_${i}`)];
+      if (!document.getElementById('exp-block-' + i)) continue;
+      const tt = v('exp_title_' + i), co = v('exp_company_' + i);
+      const pr = v('exp_period_' + i), tk = v('exp_tasks_' + i);
       if (tt || co) {
-        md += `### خبرة ${i}\n\n`;
-        if (tt) md += `- **المسمى:** ${tt}\n`;
-        if (co) md += `- **الشركة:** ${co}\n`;
-        if (pr) md += `- **الفترة:** ${pr}\n`;
-        if (tk) md += `- **المهام:**\n${tk.split('\n').filter(l => l.trim()).map(l => `  - ${l.trim()}`).join('\n')}\n`;
-        md += `\n`;
+        lines.push('### خبرة ' + i);
+        lines.push('');
+        if (tt) lines.push('- **المسمى:** ' + tt);
+        if (co) lines.push('- **الشركة:** ' + co);
+        if (pr) lines.push('- **الفترة:** ' + pr);
+        if (tk) {
+          lines.push('- **المهام:**');
+          tk.split('\n').filter(l => l.trim()).forEach(l => lines.push('  - ' + l.trim()));
+        }
+        lines.push('');
       }
     }
   } else {
-    md += `- لم يتم الإجابة\n\n`;
+    lines.push('- لم يتم الإجابة');
+    lines.push('');
   }
 
   // 4b Projects
-  md += `## 🚀 أبرز المشاريع\n\n`;
+  lines.push('## 🚀 أبرز المشاريع');
+  lines.push('');
   let anyProj = false;
   for (let i = 1; i <= projCount; i++) {
-    if (!document.getElementById(`proj-block-${i}`)) continue;
-    const [nm, pr] = [v(`proj_name_${i}`), v(`proj_period_${i}`)];
+    if (!document.getElementById('proj-block-' + i)) continue;
+    const nm = v('proj_name_' + i), pr = v('proj_period_' + i);
     if (nm) {
       anyProj = true;
-      md += `### مشروع ${i}\n\n`;
-      md += `- **المشروع والدور:** ${nm}\n`;
-      if (pr) md += `- **الفترة:** ${pr}\n`;
-      md += `\n`;
+      lines.push('### مشروع ' + i);
+      lines.push('');
+      lines.push('- **المشروع والدور:** ' + nm);
+      if (pr) lines.push('- **الفترة:** ' + pr);
+      lines.push('');
     }
   }
-  if (!anyProj) md += `- لا توجد مشاريع مُدخلة\n`;
+  if (!anyProj) lines.push('- لا توجد مشاريع مُدخلة');
   const n4 = v('note4_text');
-  if (n4) md += `\n**ملاحظة (الخبرات):** ${n4}\n`;
-  md += `\n`;
+  if (n4) { lines.push(''); lines.push('**ملاحظة (الخبرات):** ' + n4); }
+  lines.push('');
 
   // 5 Tech Skills
-  md += `## 5️⃣ المهارات التقنية\n\n`;
+  lines.push('## 5️⃣ المهارات التقنية');
+  lines.push('');
   const techSk = collectSkills('tech');
-  if (techSk.length > 0) techSk.forEach(s => { md += `- ${s}\n`; });
-  else md += `- سيتم إضافة المهارات الأنسب تلقائياً\n`;
-  md += `\n`;
+  if (techSk.length > 0) techSk.forEach(s => lines.push('- ' + s));
+  else lines.push('- سيتم إضافة المهارات الأنسب تلقائياً');
+  lines.push('');
 
   // 5b Soft Skills
-  md += `## 🤝 المهارات الشخصية\n\n`;
+  lines.push('## 🤝 المهارات الشخصية');
+  lines.push('');
   const softSk = collectSkills('soft');
-  if (softSk.length > 0) softSk.forEach(s => { md += `- ${s}\n`; });
-  else md += `- سيتم إضافة المهارات الأنسب تلقائياً\n`;
-  md += `\n`;
+  if (softSk.length > 0) softSk.forEach(s => lines.push('- ' + s));
+  else lines.push('- سيتم إضافة المهارات الأنسب تلقائياً');
+  lines.push('');
 
   // 5c Languages
-  md += `## 🌐 اللغات\n\n`;
+  lines.push('## 🌐 اللغات');
+  lines.push('');
   const langs = collectLanguages();
-  if (langs.length > 0) langs.forEach(l => { md += `- ${l}\n`; });
-  else md += `- لم يتم إدخال لغات\n`;
-  md += `\n`;
+  if (langs.length > 0) langs.forEach(l => lines.push('- ' + l));
+  else lines.push('- لم يتم إدخال لغات');
+  lines.push('');
 
   // 5d Volunteer
-  md += `## 🤲 العضويات والأعمال التطوعية\n\n`;
+  lines.push('## 🤲 العضويات والأعمال التطوعية');
+  lines.push('');
   let anyVol = false;
   for (let i = 1; i <= volCount; i++) {
-    if (!document.getElementById(`vol-block-${i}`)) continue;
-    const [org, pr] = [v(`vol_org_${i}`), v(`vol_period_${i}`)];
+    if (!document.getElementById('vol-block-' + i)) continue;
+    const org = v('vol_org_' + i), pr = v('vol_period_' + i);
     if (org) {
       anyVol = true;
-      md += `- **${org}**${pr ? ' — ' + pr : ''}\n`;
+      lines.push('- **' + org + '**' + (pr ? ' — ' + pr : ''));
     }
   }
-  if (!anyVol) md += `- لا توجد أعمال تطوعية\n`;
+  if (!anyVol) lines.push('- لا توجد أعمال تطوعية');
   const n5 = v('note5_text');
-  if (n5) md += `\n**ملاحظة (المهارات):** ${n5}\n`;
-  md += `\n`;
+  if (n5) { lines.push(''); lines.push('**ملاحظة (المهارات):** ' + n5); }
+  lines.push('');
 
-  md += `---\n\n*تم الإرسال عبر نموذج سيرتي المميزة*\n`;
-  return md;
+  // Footer
+  lines.push('---');
+  lines.push('');
+  lines.push('*تم الإرسال عبر نموذج سيرتي المميزة*');
+
+  return lines.join('\n');
 }
 
 // ===== SUBMIT =====
