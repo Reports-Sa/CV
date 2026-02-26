@@ -278,9 +278,10 @@
         <input type="tel" id="phone" placeholder=" ">
         <label>رقم الجوال</label>
       </div>
-      <div class="float-group">
-        <input type="email" id="email" placeholder=" ">
-        <label style="font-size:0.76rem;">(يفضل أن يكون رسمي بعيدا عن الألقاب والرموز) مثال: name@email.com</label>
+      <div style="margin-bottom:1.25rem;">
+        <label style="display:block;font-size:0.88rem;font-weight:600;color:var(--text);margin-bottom:0.35rem;font-family:'Tajawal',sans-serif;">البريد الإلكتروني</label>
+        <span class="hint" style="margin-bottom:0.4rem;">يفضل أن يكون رسمياً بعيداً عن الألقاب والرموز — مثال: ahmed.ali@gmail.com</span>
+        <input type="email" id="email" placeholder="أدخل بريدك الإلكتروني" style="width:100%;padding:0.75rem 1rem;border:1.5px solid var(--border);border-radius:10px;background:#fff;font-family:'Tajawal',sans-serif;font-size:0.95rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;" onfocus="this.style.borderColor='var(--primary)';this.style.boxShadow='0 0 0 3px rgba(10,102,194,0.12)'" onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
       </div>
       <div class="float-group">
         <input type="text" id="city" placeholder=" ">
@@ -396,6 +397,9 @@
 
       <!-- Languages -->
       <div class="sub-title">🌐 اللغات</div>
+      <div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:10px;padding:0.75rem 1rem;margin-bottom:0.85rem;font-size:0.84rem;color:#92400e;line-height:1.6;">
+        💡 <strong>تلميح:</strong> إذا كان مستواك ضعيفاً في لغة معينة، يفضل حذفها وعدم كتابتها. <span style="color:#b45309;">(اضغط × للحذف)</span>
+      </div>
       <div id="lang-list"></div>
       <button type="button" class="btn-add" onclick="addLanguage()">+ إضافة لغة أخرى</button>
 
@@ -424,11 +428,8 @@
     <!-- Success -->
     <div id="success-screen">
       <div class="checkmark-circle">✓</div>
-      <h2 class="font-heading text-2xl font-extrabold mb-2">تم الإرسال بنجاح!</h2>
-      <p class="text-[#64748b] text-base mb-6">شكراً لك! تلقينا بياناتك وسنبدأ العمل على سيرتك المميزة. سنتواصل معك خلال 24-48 ساعة.</p>
-      <div class="bg-[#ecfdf5] border border-[#6ee7b7] rounded-xl p-4 text-right">
-        <p class="text-sm text-[#065f46] font-medium">📬 يرجى التحقق من بريدك الإلكتروني للحصول على تأكيد الطلب.</p>
-      </div>
+      <h2 class="font-heading text-2xl font-extrabold mb-2">تم الإرسال بنجاح! 🚀</h2>
+      <p class="text-[#64748b] text-base mb-6">شكراً لك! تلقينا بياناتك وسنبدأ العمل على سيرتك المميزة فوراً. ستصلك خلال 24 ساعة.</p>
     </div>
 
   </div>
@@ -449,10 +450,11 @@
 
 <!-- Netlify Form -->
 <form name="resume-request" data-netlify="true" method="POST" id="netlify-form" style="display:none;">
+  <input type="hidden" name="form-name" value="resume-request" />
   <textarea name="markdown_data" id="markdown_data"></textarea>
 </form>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ===== STATE =====
 let currentStep = 1;
 const totalSteps = 5;
@@ -627,12 +629,11 @@ function addLanguage(value='') {
   langCount++;
   const id=langCount, c=document.getElementById('lang-list');
   const row=document.createElement('div'); row.className='lang-row'; row.id=`lang_row_${id}`;
-  row.innerHTML=`<span style="color:var(--primary);font-size:1rem;flex-shrink:0;">🌐</span><input type="text" id="lang_${id}" value="${value}" placeholder="اللغة ومستواها (مثال: الإنجليزية - متقدم)"><button type="button" class="rm-lang" onclick="removeLangRow('lang_row_${id}')">×</button>`;
+  row.innerHTML=`<span style="color:var(--primary);font-size:1rem;flex-shrink:0;">🌐</span><input type="text" id="lang_${id}" value="${value}" placeholder="مثال: الإنجليزية - ممتاز"><button type="button" class="rm-lang" onclick="removeLangRow('lang_row_${id}')">×</button>`;
   c.appendChild(row);
 }
 function removeLangRow(rowId) {
-  if (document.getElementById('lang-list').querySelectorAll('.lang-row').length > 1)
-    document.getElementById(rowId)?.remove();
+  document.getElementById(rowId)?.remove();
 }
 
 // ===== VOLUNTEER =====
@@ -778,16 +779,20 @@ function handleSubmit() {
   document.getElementById('markdown_data').value = compileMarkdown();
   setTimeout(()=>{
     const form=document.getElementById('netlify-form');
-    fetch('/',{method:'POST',body:new FormData(form)})
-      .then(()=>showSuccess()).catch(()=>showSuccess());
+    const formData = new FormData(form);
+    formData.append('form-name', 'resume-request');
+    fetch('/',{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body: new URLSearchParams(formData).toString()
+    }).then(()=>showSuccess()).catch(()=>showSuccess());
   },1800);
 }
 function showSuccess() {
   document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('progress-bar-fill').style.width='100%';
-  document.getElementById('step-label').textContent='تم الإرسال ✓';
+  document.getElementById('step-label').textContent='تم الإرسال!';
   document.getElementById('success-screen').classList.add('active');
-  document.getElementById('step-dots').innerHTML='';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
