@@ -219,7 +219,7 @@
 </div>
 
 <!-- Card -->
-<div class="max-w-2xl mx-auto bg-white rounded-2xl" style="box-shadow:0 20px 60px rgba(10,102,194,0.1),0 4px 16px rgba(0,0,0,0.07);">
+<div class="max-w-4xl mx-auto bg-white rounded-2xl" style="box-shadow:0 20px 60px rgba(10,102,194,0.1),0 4px 16px rgba(0,0,0,0.07);">
 
   <!-- Progress -->
   <div class="px-8 pt-6 pb-0">
@@ -278,11 +278,11 @@
         <input type="tel" id="phone" placeholder=" ">
         <label>رقم الجوال</label>
       </div>
-      <div style="margin-bottom:1.25rem;">
-        <label style="display:block;font-size:0.88rem;font-weight:600;color:var(--text);margin-bottom:0.35rem;font-family:'Tajawal',sans-serif;">البريد الإلكتروني</label>
-        <span class="hint" style="margin-bottom:0.4rem;">يفضل أن يكون رسمياً بعيداً عن الألقاب والرموز — مثال: ahmed.ali@gmail.com</span>
-        <input type="email" id="email" placeholder="أدخل بريدك الإلكتروني" style="width:100%;padding:0.75rem 1rem;border:1.5px solid var(--border);border-radius:10px;background:#fff;font-family:'Tajawal',sans-serif;font-size:0.95rem;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;" onfocus="this.style.borderColor='var(--primary)';this.style.boxShadow='0 0 0 3px rgba(10,102,194,0.12)'" onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+      <div class="float-group" style="margin-bottom:0.4rem;">
+        <input type="email" id="email" placeholder=" ">
+        <label>البريد الإلكتروني</label>
       </div>
+      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1.25rem;padding-right:0.25rem;">يفضل أن يكون رسمياً بعيداً عن الألقاب والرموز — مثال: ahmed.ali@gmail.com</p>
       <div class="float-group">
         <input type="text" id="city" placeholder=" ">
         <label>المدينة (اتركها فارغة إن كنت منفتحاً على الانتقال)</label>
@@ -667,107 +667,152 @@ function collectLanguages() {
 // ===== MARKDOWN =====
 function compileMarkdown() {
   const pm={ar:'سيرة باللغة العربية (50 ريال)',en:'سيرة باللغة الإنجليزية (50 ريال)',both:'سيرتين عربية + إنجليزية (100 ريال)'};
-  let md=`# 📋 طلب خدمة سيرة ذاتية — سيرتي المميزة\n\n---\n\n`;
+  let md = `# 📋 طلب خدمة سيرة ذاتية — سيرتي المميزة\n\n---\n\n`;
 
-  // 1
-  md+=`## 1️⃣ الحزمة المختارة\n- **الحزمة:** ${selectedPricing?pm[selectedPricing]:'لم يتم الاختيار'}\n\n`;
+  // 1 Package
+  md += `## 1️⃣ الحزمة المختارة\n\n`;
+  md += `- **الحزمة:** ${selectedPricing ? pm[selectedPricing] : 'لم يتم الاختيار'}\n\n`;
 
-  // 2
-  md+=`## 2️⃣ المعلومات الشخصية\n`;
-  md+=`- **الاسم الكامل:** ${v('full_name')}\n- **رقم الجوال:** ${v('phone')}\n- **البريد الإلكتروني:** ${v('email')}\n`;
-  md+=`- **المدينة:** ${v('city')||'منفتح على الانتقال'}\n- **الجنسية:** ${v('nationality')||'لم يُحدد'}\n`;
-  const n2=v('note2_text'); if(n2) md+=`- **ملاحظة:** ${n2}\n`;
-  md+='\n';
+  // 2 Personal Info
+  md += `## 2️⃣ المعلومات الشخصية\n\n`;
+  md += `- **الاسم الكامل:** ${v('full_name')}\n`;
+  md += `- **رقم الجوال:** ${v('phone')}\n`;
+  md += `- **البريد الإلكتروني:** ${v('email')}\n`;
+  md += `- **المدينة:** ${v('city') || 'منفتح على الانتقال'}\n`;
+  md += `- **الجنسية:** ${v('nationality') || 'لم يُحدد'}\n`;
+  const n2 = v('note2_text');
+  if (n2) md += `- **ملاحظة:** ${n2}\n`;
+  md += `\n`;
 
   // 3 Education
-  md+=`## 3️⃣ المؤهلات العلمية\n`;
-  let anyEdu=false;
-  for(let i=1;i<=eduCount;i++){
-    if(!document.getElementById(`edu-block-${i}`))continue;
-    const [dg,mj,un,yr]=[v(`edu_degree_${i}`),v(`edu_major_${i}`),v(`edu_uni_${i}`),v(`edu_year_${i}`)];
-    if(dg||mj||un||yr){anyEdu=true;md+=`### مؤهل ${i}\n`;if(dg)md+=`- **الدرجة:** ${dg}\n`;if(mj)md+=`- **التخصص:** ${mj}\n`;if(un)md+=`- **الجامعة:** ${un}\n`;if(yr)md+=`- **سنة التخرج:** ${yr}\n`;}
+  md += `## 3️⃣ المؤهلات العلمية\n\n`;
+  let anyEdu = false;
+  for (let i = 1; i <= eduCount; i++) {
+    if (!document.getElementById(`edu-block-${i}`)) continue;
+    const [dg, mj, un, yr] = [v(`edu_degree_${i}`), v(`edu_major_${i}`), v(`edu_uni_${i}`), v(`edu_year_${i}`)];
+    if (dg || mj || un || yr) {
+      anyEdu = true;
+      md += `### مؤهل ${i}\n\n`;
+      if (dg) md += `- **الدرجة:** ${dg}\n`;
+      if (mj) md += `- **التخصص:** ${mj}\n`;
+      if (un) md += `- **الجامعة:** ${un}\n`;
+      if (yr) md += `- **سنة التخرج:** ${yr}\n`;
+      md += `\n`;
+    }
   }
-  if(!anyEdu)md+=`- لم يتم إدخال مؤهلات\n`;
-  md+='\n';
+  if (!anyEdu) md += `- لم يتم إدخال مؤهلات\n\n`;
 
   // 3b Certifications
-  md+=`## 🏅 الشهادات الاحترافية والرخص\n`;
-  let anyCert=false;
-  for(let i=1;i<=certCount;i++){
-    if(!document.getElementById(`cert-block-${i}`))continue;
-    const[nm,is,dt]=[v(`cert_name_${i}`),v(`cert_issuer_${i}`),v(`cert_date_${i}`)];
-    if(nm||is){anyCert=true;md+=`### شهادة ${i}\n`;if(nm)md+=`- **اسم الشهادة:** ${nm}\n`;if(is)md+=`- **الجهة المانحة:** ${is}\n`;if(dt)md+=`- **تاريخ الحصول:** ${dt}\n`;}
+  md += `## 🏅 الشهادات الاحترافية والرخص\n\n`;
+  let anyCert = false;
+  for (let i = 1; i <= certCount; i++) {
+    if (!document.getElementById(`cert-block-${i}`)) continue;
+    const [nm, is, dt] = [v(`cert_name_${i}`), v(`cert_issuer_${i}`), v(`cert_date_${i}`)];
+    if (nm || is) {
+      anyCert = true;
+      md += `### شهادة ${i}\n\n`;
+      if (nm) md += `- **اسم الشهادة:** ${nm}\n`;
+      if (is) md += `- **الجهة المانحة:** ${is}\n`;
+      if (dt) md += `- **تاريخ الحصول:** ${dt}\n`;
+      md += `\n`;
+    }
   }
-  if(!anyCert)md+=`- لا توجد شهادات احترافية\n`;
-  md+='\n';
+  if (!anyCert) md += `- لا توجد شهادات احترافية\n\n`;
 
   // 3c Courses
-  md+=`## 📚 الدورات التدريبية\n`;
-  let anyCourse=false;
-  for(let i=1;i<=courseCount;i++){
-    if(!document.getElementById(`course-block-${i}`))continue;
-    const[nm,org]=[v(`course_name_${i}`),v(`course_org_${i}`)];
-    if(nm||org){anyCourse=true;md+=`- **${nm||'دورة'}**${org?' — '+org:''}\n`;}
+  md += `## 📚 الدورات التدريبية\n\n`;
+  let anyCourse = false;
+  for (let i = 1; i <= courseCount; i++) {
+    if (!document.getElementById(`course-block-${i}`)) continue;
+    const [nm, org] = [v(`course_name_${i}`), v(`course_org_${i}`)];
+    if (nm || org) {
+      anyCourse = true;
+      md += `- **${nm || 'دورة'}**${org ? ' — ' + org : ''}\n`;
+    }
   }
-  if(!anyCourse)md+=`- لا توجد دورات مُدخلة\n`;
-  const n3=v('note3_text'); if(n3)md+=`\n**ملاحظة (المؤهلات):** ${n3}\n`;
-  md+='\n';
+  if (!anyCourse) md += `- لا توجد دورات مُدخلة\n`;
+  const n3 = v('note3_text');
+  if (n3) md += `\n**ملاحظة (المؤهلات):** ${n3}\n`;
+  md += `\n`;
 
   // 4 Experience
-  md+=`## 4️⃣ الخبرة العملية\n`;
-  if(hasExperience===false){md+=`- **لا توجد خبرة عملية سابقة**\n`;}
-  else if(hasExperience===true){
-    for(let i=1;i<=expCount;i++){
-      if(!document.getElementById(`exp-block-${i}`))continue;
-      const[tt,co,pr,tk]=[v(`exp_title_${i}`),v(`exp_company_${i}`),v(`exp_period_${i}`),v(`exp_tasks_${i}`)];
-      if(tt||co){md+=`### خبرة ${i}\n`;if(tt)md+=`- **المسمى:** ${tt}\n`;if(co)md+=`- **الشركة:** ${co}\n`;if(pr)md+=`- **الفترة:** ${pr}\n`;if(tk)md+=`- **المهام:**\n${tk.split('\n').filter(l=>l.trim()).map(l=>`  - ${l.trim()}`).join('\n')}\n`;}
+  md += `## 4️⃣ الخبرة العملية\n\n`;
+  if (hasExperience === false) {
+    md += `- **لا توجد خبرة عملية سابقة**\n\n`;
+  } else if (hasExperience === true) {
+    for (let i = 1; i <= expCount; i++) {
+      if (!document.getElementById(`exp-block-${i}`)) continue;
+      const [tt, co, pr, tk] = [v(`exp_title_${i}`), v(`exp_company_${i}`), v(`exp_period_${i}`), v(`exp_tasks_${i}`)];
+      if (tt || co) {
+        md += `### خبرة ${i}\n\n`;
+        if (tt) md += `- **المسمى:** ${tt}\n`;
+        if (co) md += `- **الشركة:** ${co}\n`;
+        if (pr) md += `- **الفترة:** ${pr}\n`;
+        if (tk) md += `- **المهام:**\n${tk.split('\n').filter(l => l.trim()).map(l => `  - ${l.trim()}`).join('\n')}\n`;
+        md += `\n`;
+      }
     }
-  } else {md+=`- لم يتم الإجابة\n`;}
-  md+='\n';
+  } else {
+    md += `- لم يتم الإجابة\n\n`;
+  }
 
   // 4b Projects
-  md+=`## 🚀 أبرز المشاريع\n`;
-  let anyProj=false;
-  for(let i=1;i<=projCount;i++){
-    if(!document.getElementById(`proj-block-${i}`))continue;
-    const[nm,pr]=[v(`proj_name_${i}`),v(`proj_period_${i}`)];
-    if(nm){anyProj=true;md+=`### مشروع ${i}\n- **المشروع والدور:** ${nm}\n`;if(pr)md+=`- **الفترة:** ${pr}\n`;}
+  md += `## 🚀 أبرز المشاريع\n\n`;
+  let anyProj = false;
+  for (let i = 1; i <= projCount; i++) {
+    if (!document.getElementById(`proj-block-${i}`)) continue;
+    const [nm, pr] = [v(`proj_name_${i}`), v(`proj_period_${i}`)];
+    if (nm) {
+      anyProj = true;
+      md += `### مشروع ${i}\n\n`;
+      md += `- **المشروع والدور:** ${nm}\n`;
+      if (pr) md += `- **الفترة:** ${pr}\n`;
+      md += `\n`;
+    }
   }
-  if(!anyProj)md+=`- لا توجد مشاريع مُدخلة\n`;
-  const n4=v('note4_text'); if(n4)md+=`\n**ملاحظة (الخبرات):** ${n4}\n`;
-  md+='\n';
+  if (!anyProj) md += `- لا توجد مشاريع مُدخلة\n`;
+  const n4 = v('note4_text');
+  if (n4) md += `\n**ملاحظة (الخبرات):** ${n4}\n`;
+  md += `\n`;
 
   // 5 Tech Skills
-  md+=`## 5️⃣ المهارات التقنية\n`;
-  const techSk=collectSkills('tech');
-  techSk.length>0?techSk.forEach(s=>{md+=`- ${s}\n`;}):md+=`- سيتم إضافة المهارات الأنسب تلقائياً\n`;
-  md+='\n';
+  md += `## 5️⃣ المهارات التقنية\n\n`;
+  const techSk = collectSkills('tech');
+  if (techSk.length > 0) techSk.forEach(s => { md += `- ${s}\n`; });
+  else md += `- سيتم إضافة المهارات الأنسب تلقائياً\n`;
+  md += `\n`;
 
   // 5b Soft Skills
-  md+=`## 🤝 المهارات الشخصية\n`;
-  const softSk=collectSkills('soft');
-  softSk.length>0?softSk.forEach(s=>{md+=`- ${s}\n`;}):md+=`- سيتم إضافة المهارات الأنسب تلقائياً\n`;
-  md+='\n';
+  md += `## 🤝 المهارات الشخصية\n\n`;
+  const softSk = collectSkills('soft');
+  if (softSk.length > 0) softSk.forEach(s => { md += `- ${s}\n`; });
+  else md += `- سيتم إضافة المهارات الأنسب تلقائياً\n`;
+  md += `\n`;
 
   // 5c Languages
-  md+=`## 🌐 اللغات\n`;
-  const langs=collectLanguages();
-  langs.length>0?langs.forEach(l=>{md+=`- ${l}\n`;}):md+=`- لم يتم إدخال لغات\n`;
-  md+='\n';
+  md += `## 🌐 اللغات\n\n`;
+  const langs = collectLanguages();
+  if (langs.length > 0) langs.forEach(l => { md += `- ${l}\n`; });
+  else md += `- لم يتم إدخال لغات\n`;
+  md += `\n`;
 
   // 5d Volunteer
-  md+=`## 🤲 العضويات والأعمال التطوعية\n`;
-  let anyVol=false;
-  for(let i=1;i<=volCount;i++){
-    if(!document.getElementById(`vol-block-${i}`))continue;
-    const[org,pr]=[v(`vol_org_${i}`),v(`vol_period_${i}`)];
-    if(org){anyVol=true;md+=`- **${org}**${pr?' — '+pr:''}\n`;}
+  md += `## 🤲 العضويات والأعمال التطوعية\n\n`;
+  let anyVol = false;
+  for (let i = 1; i <= volCount; i++) {
+    if (!document.getElementById(`vol-block-${i}`)) continue;
+    const [org, pr] = [v(`vol_org_${i}`), v(`vol_period_${i}`)];
+    if (org) {
+      anyVol = true;
+      md += `- **${org}**${pr ? ' — ' + pr : ''}\n`;
+    }
   }
-  if(!anyVol)md+=`- لا توجد أعمال تطوعية\n`;
-  const n5=v('note5_text'); if(n5)md+=`\n**ملاحظة (المهارات):** ${n5}\n`;
-  md+='\n';
+  if (!anyVol) md += `- لا توجد أعمال تطوعية\n`;
+  const n5 = v('note5_text');
+  if (n5) md += `\n**ملاحظة (المهارات):** ${n5}\n`;
+  md += `\n`;
 
-  md+=`---\n*تم الإرسال عبر نموذج سيرتي المميزة*\n`;
+  md += `---\n\n*تم الإرسال عبر نموذج سيرتي المميزة*\n`;
   return md;
 }
 
@@ -778,22 +823,22 @@ function handleSubmit() {
   document.getElementById('submit-btn').disabled=true;
   document.getElementById('markdown_data').value = compileMarkdown();
   setTimeout(()=>{
-    const form=document.getElementById('netlify-form');
+    const form = document.getElementById('netlify-form');
     const formData = new FormData(form);
     formData.append('form-name', 'resume-request');
-    fetch('/',{
-      method:'POST',
-      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams(formData).toString()
-    }).then(()=>showSuccess()).catch(()=>showSuccess());
-  },1800);
+    }).then(() => showSuccess()).catch(() => showSuccess());
+  }, 1800);
 }
 function showSuccess() {
-  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('progress-bar-fill').style.width='100%';
-  document.getElementById('step-label').textContent='تم الإرسال!';
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('progress-bar-fill').style.width = '100%';
+  document.getElementById('step-label').textContent = 'تم الإرسال!';
   document.getElementById('success-screen').classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 </body>
