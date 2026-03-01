@@ -282,7 +282,7 @@
         <input type="email" id="email" placeholder=" ">
         <label>البريد الإلكتروني</label>
       </div>
-      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1.25rem;padding-right:0.25rem;">يفضل أن يكون رسمياً بعيداً عن الألقاب والرموز — مثال: ahmed.ali@gmail.com</p>
+      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1.25rem;padding-right:0.25rem;">يفضل أن يكون رسمياً بعيداً عن الألقاب والرموز — مثال: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="93f2fbfef6f7bdf2fffad3f4fef2faffbdf0fcfe">[email&#160;protected]</a></p>
       <div class="float-group">
         <input type="text" id="city" placeholder=" ">
         <label>المدينة (اتركها فارغة إن كنت منفتحاً على الانتقال)</label>
@@ -454,7 +454,7 @@
   <textarea name="markdown_data" id="markdown_data"></textarea>
 </form>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ===== STATE =====
 let currentStep = 1;
 const totalSteps = 5;
@@ -536,12 +536,20 @@ function addEduEntry() {
   d.innerHTML=`
     ${id>1?`<button type="button" class="remove-btn" onclick="removeBlock('edu-block-${id}')">×</button>`:''}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem;">
-      <div class="float-group" style="margin-bottom:0;"><input type="text" id="edu_degree_${id}" placeholder=" "><label>الدرجة العلمية</label></div>
+      <div class="float-group" style="margin-bottom:0;">
+        <input type="text" id="edu_degree_${id}" placeholder=" ">
+        <label>الدرجة العلمية</label>
+        <span style="font-size:0.72rem;color:var(--muted);display:block;margin-top:3px;padding-right:4px;">(مثال: دبلوم / بكالوريوس / ماجستير / دكتوراه)</span>
+      </div>
       <div class="float-group" style="margin-bottom:0;"><input type="text" id="edu_major_${id}" placeholder=" "><label>التخصص</label></div>
     </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem;">
+      <div class="float-group" style="margin-bottom:0;"><input type="text" id="edu_uni_${id}" placeholder=" "><label>اسم الجامعة / الكلية</label></div>
+      <div class="float-group" style="margin-bottom:0;"><input type="text" id="edu_year_${id}" placeholder="مثال: يناير 2025"><label>سنة التخرج</label></div>
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
-      <div class="float-group" style="margin-bottom:0;"><input type="text" id="edu_uni_${id}" placeholder=" "><label>الجامعة / المعهد</label></div>
-      <div class="float-group" style="margin-bottom:0;"><input type="text" id="edu_year_${id}" placeholder=" "><label>سنة التخرج</label></div>
+      <div class="float-group" style="margin-bottom:0;"><input type="text" id="edu_gpa_${id}" placeholder=" "><label>المعدل / التقدير (اختياري)</label></div>
+      <div></div>
     </div>`;
   c.appendChild(d);
 }
@@ -705,6 +713,7 @@ function compileMarkdown() {
     if (!document.getElementById('edu-block-' + i)) continue;
     const dg = v('edu_degree_' + i), mj = v('edu_major_' + i);
     const un = v('edu_uni_' + i),    yr = v('edu_year_' + i);
+    const gp = v('edu_gpa_' + i);
     if (dg || mj || un || yr) {
       anyEdu = true;
       lines.push('### مؤهل ' + i);
@@ -713,6 +722,7 @@ function compileMarkdown() {
       if (mj) lines.push('- **التخصص:** ' + mj);
       if (un) lines.push('- **الجامعة:** ' + un);
       if (yr) lines.push('- **سنة التخرج:** ' + yr);
+      if (gp) lines.push('- **المعدل / التقدير:** ' + gp);
       lines.push('');
     }
   }
@@ -872,11 +882,4 @@ function handleSubmit() {
 }
 function showSuccess() {
   document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('progress-bar-fill').style.width = '100%';
-  document.getElementById('step-label').textContent = 'تم الإرسال!';
-  document.getElementById('success-screen').classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-</script>
-</body>
-</html>
+  document.getElementById('progress-bar-fill').style.width = '10
